@@ -34,7 +34,7 @@ const isAnyDefined = (...args) =>
 
 const noop = () => {};
 
-export const useDeferredStateSpring = ({
+export const useAnimatePresence = ({
   variants,
   initial,
   animateFirstRender = true,
