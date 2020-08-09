@@ -1,0 +1,9 @@
+{
+  "name": "useAnimatePresence",
+  "devDependencies": {
+    "microbundle": "^0.12.3"
+  },
+  "dependencies": {
+    "springframes": "^0.5.2"
+  }
+}
