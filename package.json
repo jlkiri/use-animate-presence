@@ -1,7 +1,35 @@
 {
-  "name": "useAnimatePresence",
+  "name": "use-animate-presence",
+  "version": "0.1.0",
+  "description": "useAnimatePresence",
+  "main": "use-animate-presence.js",
+  "source": "src/index.ts",
+  "unpkg": "lib/use-animate-presence.umd.js",
+  "module": "lib/use-animate-presence.module.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "microbundle -o lib",
+    "dev": "microbundle watch"
+  },
+  "keywords": [
+    "animation",
+    "transition",
+    "react"
+  ],
+  "repository": "https://github.com/jlkiri/useAnimatePresence",
+  "author": "Kirill Vasiltsov (@jlkiri)",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "peerDependencies": {
+    "react": ">= 16.8.0",
+    "react-dom": ">= 16.8.0"
+  },
   "devDependencies": {
-    "microbundle": "^0.12.3"
+    "microbundle": "^0.12.3",
+    "react": "^16.13.1",
+    "typescript": "^3.9.7"
   },
   "dependencies": {
     "springframes": "^0.5.2"
