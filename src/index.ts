@@ -1,32 +1,48 @@
 import React from "react";
-import { createSpringAnimation } from "springframes";
+import { createSpringAnimation, SpringParameters } from "springframes";
+
+type FromTo = { from: number; to: number };
+
+export type Variant = "visible" | "hidden";
+
+export type Variants = {
+  x?: FromTo;
+  y?: FromTo;
+  scale?: FromTo;
+  opacity?: FromTo;
+};
+
+export type SpringOptions = Pick<
+  SpringParameters,
+  "damping" | "stiffness" | "mass"
+>;
+
+export type Parameters = {
+  variants: Variants;
+  options?: SpringOptions;
+  initial: Variant;
+  animateFirstRender?: boolean;
+  enter?: (fn?: () => void) => void;
+  exit?: (fn?: () => void) => void;
+  wait?: (fn?: () => void) => void;
+  debugName?: string;
+};
 
 const isAnyDefined = (...args) =>
   args.some((arg) => arg !== undefined && arg !== null);
 
 const noop = () => {};
 
-export type Variant = "visible" | "hidden";
-
-export type PresenceParameters = {
-  variants: any;
-  initial: Variant;
-  animateFirstRender?: boolean;
-  enter?: (...args: any) => void;
-  exit?: (...args: any) => void;
-  wait?: (...args: any) => void;
-  debugName?: string;
-};
-
 export const useDeferredStateSpring = ({
   variants,
   initial,
   animateFirstRender = true,
+  options = {},
   enter,
   exit,
   wait,
   debugName = "unknown",
-}: PresenceParameters) => {
+}: Parameters) => {
   const [variant, setVariant] = React.useState(initial);
   const didRender = React.useRef(false);
   const animationInstance = React.useRef();
@@ -35,23 +51,32 @@ export const useDeferredStateSpring = ({
 
   const isVisible = variant === "visible";
 
-  const animateSpring = (el, visible) => {
+  const { stiffness = 150, mass = 3, damping = 27 } = options;
+
+  const animateSpring = (el: typeof domRef.current, visible: boolean) => {
     const variantsX = variants.x || { from: 0, to: 0 };
     const variantsY = variants.y || { from: 0, to: 0 };
 
     const diffX = variantsX.from - variantsX.to;
     const diffY = variantsY.from - variantsY.to;
+    const scale = variants.scale ? variants.scale.to - variants.scale.from : 1;
 
     const { keyframes, frames } = createSpringAnimation({
       dx: diffX,
       dy: diffY,
-      stiffness: 150,
-      mass: 3,
-      damping: 27,
-      scale: 1 / 2,
+      stiffness,
+      mass,
+      damping,
+      scale,
       deg: 360,
       reverse: !visible,
     });
+
+    if (variants.opacity) {
+      const { from, to } = variants.opacity;
+      keyframes[0].opacity = visible ? from : to;
+      keyframes[keyframes.length - 1].opacity = visible ? to : from;
+    }
 
     const keyframeEffect = new KeyframeEffect(el, keyframes, {
       duration: (frames / 60) * 1000,
@@ -84,7 +109,7 @@ export const useDeferredStateSpring = ({
 
     if (enter) {
       console.debug(debugName, "Registering onfinish enter animation");
-      animation.onfinish = enter;
+      animation.onfinish = () => enter();
     }
   };
 
@@ -121,7 +146,11 @@ export const useDeferredStateSpring = ({
       } else {
         console.debug(debugName, "Reverting exit animation");
 
-        animationInstance.current.onfinish = enter || noop;
+        const onFinish = () => {
+          enter ? enter() : noop();
+        };
+
+        animationInstance.current.onfinish = onFinish;
         aboutToExit.current = false;
       }
 
