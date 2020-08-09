@@ -16,7 +16,7 @@
     "transition",
     "react"
   ],
-  "repository": "https://github.com/jlkiri/useAnimatePresence",
+  "repository": "https://github.com/jlkiri/use-animate-presence",
   "author": "Kirill Vasiltsov (@jlkiri)",
   "license": "MIT",
   "files": [
