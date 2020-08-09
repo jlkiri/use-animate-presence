@@ -10,6 +10,7 @@ export type Variants = {
   y?: FromTo;
   scale?: FromTo;
   opacity?: FromTo;
+  deg?: number;
 };
 
 export type SpringOptions = Pick<
@@ -53,7 +54,7 @@ export const useDeferredStateSpring = ({
 
   const { stiffness = 150, mass = 3, damping = 27 } = options;
 
-  const animateSpring = (el: typeof domRef.current, visible: boolean) => {
+  const animateSpring = (el, visible: boolean) => {
     const variantsX = variants.x || { from: 0, to: 0 };
     const variantsY = variants.y || { from: 0, to: 0 };
 
@@ -68,7 +69,7 @@ export const useDeferredStateSpring = ({
       mass,
       damping,
       scale,
-      deg: 360,
+      deg: variants.deg,
       reverse: !visible,
     });
 

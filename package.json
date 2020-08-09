@@ -32,6 +32,6 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "springframes": "^0.5.2"
+    "springframes": "^0.5.4"
   }
 }

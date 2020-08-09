@@ -3019,10 +3019,10 @@ sourcemap-codec@^1.4.4:
   resolved "https://registry.yarnpkg.com/sourcemap-codec/-/sourcemap-codec-1.4.8.tgz#ea804bd94857402e6992d05a38ef1ae35a9ab4c4"
   integrity sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==
 
-springframes@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/springframes/-/springframes-0.5.2.tgz#04d8426b42daf26f9dc6059217af88fbfbeebf7a"
-  integrity sha512-uyPOkANcCTriOR48VXABtg73esOdtRIEfb3DgXx97S9ynqkr48C+kcp3gLv6+UM7cJB6oQpr0l34r6amnTfJ3A==
+springframes@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/springframes/-/springframes-0.5.4.tgz#e6d181d74b10d384f1ee689e5fa2cc5649f9d908"
+  integrity sha512-PShyUcpcSSc3ax37pBdZtF3bulBVjt8BknMQpHvLv2Nb0u21LJV7fDtxCLWh4dfcDP47qKCyRtBKuiZa9SbjCQ==
 
 sprintf-js@~1.0.2:
   version "1.0.3"
