@@ -8,7 +8,7 @@ export type Variant = "visible" | "hidden";
 export type Variants = {
   x?: FromTo;
   y?: FromTo;
-  scale?: FromTo;
+  scale?: number;
   opacity?: FromTo;
   deg?: number;
 };
@@ -32,14 +32,12 @@ export type Parameters = {
 
 type AnimateSpringArgs = {
   el: any;
-  variants: Variants;
   visible: boolean;
   duration?: number;
-} & Required<SpringOptions>;
+};
 
 const isUndefined = (arg) => arg == undefined;
 const isAnyDefined = (...args) => args.some((a) => !isUndefined(a));
-const isNoneDefined = (...args) => args.every(isUndefined);
 const isRunning = (anim?: Animation) => anim && anim.playState === "running";
 
 const startAnimation = (el, keyframes, duration) => {
@@ -60,50 +58,9 @@ const startAnimation = (el, keyframes, duration) => {
 const noop = () => {};
 const debug = (name: string, msg: string) => console.debug(name, msg);
 
-const animateSpring = ({
-  el,
-  variants,
-  stiffness,
-  mass,
-  damping,
-  visible,
-  duration = 1000,
-}: AnimateSpringArgs) => {
-  const x = variants.x || { from: 0, to: 0 };
-  const y = variants.y || { from: 0, to: 0 };
-
-  const scale = variants.scale ? variants.scale.to - variants.scale.from : 1;
-
-  const { keyframes, frames } = createSpringAnimation({
-    dx: x.from - x.to,
-    dy: y.from - y.to,
-    stiffness,
-    mass,
-    damping,
-    scale,
-    deg: variants.deg,
-    reverse: !visible,
-  });
-
-  const noMove = keyframes.length === 0;
-
-  if (variants.opacity) {
-    const { from, to } = variants.opacity;
-    if (noMove) {
-      keyframes.push({ opacity: visible ? from : to });
-      keyframes.push({ opacity: visible ? to : from });
-    } else {
-      keyframes[0].opacity = visible ? from : to;
-      keyframes[keyframes.length - 1].opacity = visible ? to : from;
-    }
-  }
-
-  return startAnimation(
-    el,
-    keyframes,
-    noMove ? duration : (frames / 60) * 1000
-  );
-};
+const defaultDiff = { from: 0, to: 0 };
+const defaultOpacity = { from: 1, to: 1 };
+const defaultScale = 1;
 
 export const useAnimatePresence = ({
   variants,
@@ -138,17 +95,55 @@ export const useAnimatePresence = ({
     throw Error(`You cannot use wait if enter or exit is defined.`);
   }
 
+  const {
+    x = defaultDiff,
+    y = defaultDiff,
+    scale = defaultScale,
+    opacity = defaultOpacity,
+    deg = 0,
+  } = variants;
+
   enter = wait || enter;
   exit = wait || exit;
+
+  const animateSpring = ({
+    el,
+    visible,
+    duration = 1000,
+  }: AnimateSpringArgs) => {
+    const { keyframes, frames } = createSpringAnimation({
+      dx: x.from - x.to,
+      dy: y.from - y.to,
+      stiffness,
+      mass,
+      damping,
+      scale,
+      deg,
+      reverse: !visible,
+    });
+
+    const noMove = keyframes.length === 0;
+
+    if (noMove) {
+      keyframes.push({}, {});
+    }
+
+    keyframes[0].opacity = visible ? opacity.from : opacity.to;
+    keyframes[keyframes.length - 1].opacity = visible
+      ? opacity.to
+      : opacity.from;
+
+    return startAnimation(
+      el,
+      keyframes,
+      noMove ? duration : (frames / 60) * 1000
+    );
+  };
 
   const animateVisible = (el) =>
     animateSpring({
       el,
-      variants,
-      stiffness,
       duration,
-      damping,
-      mass,
       visible: true,
     });
 
@@ -176,11 +171,7 @@ export const useAnimatePresence = ({
     const playExitAnimation = () => {
       const animation = animateSpring({
         el: domRef.current,
-        variants,
-        stiffness,
-        damping,
         duration,
-        mass,
         visible: false,
       });
       animationInstance.current = animation;
