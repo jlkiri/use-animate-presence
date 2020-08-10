@@ -10,6 +10,10 @@
 - Chainable mounts / unmounts
 - Small (~1KB)
 
+# Demo
+
+[![Edit use-animate-presence-logo](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/use-animate-presence-logo-vxdqc?fontsize=14&hidenavigation=1&theme=dark)
+
 # Get started
 
 - NPM: `npm install use-animation-presence`
