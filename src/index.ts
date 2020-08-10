@@ -1,7 +1,7 @@
 import React from "react";
 import { createSpringAnimation, SpringParameters } from "springframes";
 
-type FromTo = { from: number; to: number };
+export type FromTo = { from: number; to: number };
 
 export type Variant = "visible" | "hidden";
 
@@ -21,6 +21,7 @@ export type SpringOptions = Pick<
 export type Parameters = {
   variants: Variants;
   options?: SpringOptions;
+  duration?: number;
   initial: Variant;
   animateFirstRender?: boolean;
   enter?: (fn?: () => void) => void;
@@ -29,13 +30,84 @@ export type Parameters = {
   debugName?: string;
 };
 
-const isAnyDefined = (...args) =>
-  args.some((arg) => arg !== undefined && arg !== null);
+type AnimateSpringArgs = {
+  el: any;
+  variants: Variants;
+  visible: boolean;
+  duration?: number;
+} & Required<SpringOptions>;
+
+const isUndefined = (arg) => arg == undefined;
+const isAnyDefined = (...args) => args.some((a) => !isUndefined(a));
+const isNoneDefined = (...args) => args.every(isUndefined);
+const isRunning = (anim?: Animation) => anim && anim.playState === "running";
+
+const startAnimation = (el, keyframes, duration) => {
+  const keyframeEffect = new KeyframeEffect(el, keyframes, {
+    duration: duration,
+    fill: "both",
+    easing: "linear",
+    iterations: 1,
+  });
+
+  const animation = new Animation(keyframeEffect);
+
+  animation.play();
+
+  return animation;
+};
 
 const noop = () => {};
+const debug = (name: string, msg: string) => console.debug(name, msg);
+
+const animateSpring = ({
+  el,
+  variants,
+  stiffness,
+  mass,
+  damping,
+  visible,
+  duration = 1000,
+}: AnimateSpringArgs) => {
+  const x = variants.x || { from: 0, to: 0 };
+  const y = variants.y || { from: 0, to: 0 };
+
+  const scale = variants.scale ? variants.scale.to - variants.scale.from : 1;
+
+  const { keyframes, frames } = createSpringAnimation({
+    dx: x.from - x.to,
+    dy: y.from - y.to,
+    stiffness,
+    mass,
+    damping,
+    scale,
+    deg: variants.deg,
+    reverse: !visible,
+  });
+
+  const noMove = keyframes.length === 0;
+
+  if (variants.opacity) {
+    const { from, to } = variants.opacity;
+    if (noMove) {
+      keyframes.push({ opacity: visible ? from : to });
+      keyframes.push({ opacity: visible ? to : from });
+    } else {
+      keyframes[0].opacity = visible ? from : to;
+      keyframes[keyframes.length - 1].opacity = visible ? to : from;
+    }
+  }
+
+  return startAnimation(
+    el,
+    keyframes,
+    noMove ? duration : (frames / 60) * 1000
+  );
+};
 
 export const useAnimatePresence = ({
   variants,
+  duration,
   initial,
   animateFirstRender = true,
   options = {},
@@ -44,63 +116,41 @@ export const useAnimatePresence = ({
   wait,
   debugName = "unknown",
 }: Parameters) => {
-  const [variant, setVariant] = React.useState(initial);
+  const [variant, setVariant] = React.useState<Variant>(initial);
   const didRender = React.useRef(false);
-  const animationInstance = React.useRef();
-  const domRef = React.useRef();
+  const animationInstance = React.useRef<Animation>();
+  const domRef = React.useRef<any>();
   const aboutToExit = React.useRef(false);
 
   const isVisible = variant === "visible";
 
   const { stiffness = 150, mass = 3, damping = 27 } = options;
 
-  const animateSpring = (el, visible: boolean) => {
-    const variantsX = variants.x || { from: 0, to: 0 };
-    const variantsY = variants.y || { from: 0, to: 0 };
+  if (isUndefined(variants)) {
+    throw Error(`You must provide variants for animation.`);
+  }
 
-    const diffX = variantsX.from - variantsX.to;
-    const diffY = variantsY.from - variantsY.to;
-    const scale = variants.scale ? variants.scale.to - variants.scale.from : 1;
-
-    const { keyframes, frames } = createSpringAnimation({
-      dx: diffX,
-      dy: diffY,
-      stiffness,
-      mass,
-      damping,
-      scale,
-      deg: variants.deg,
-      reverse: !visible,
-    });
-
-    if (variants.opacity) {
-      const { from, to } = variants.opacity;
-      keyframes[0].opacity = visible ? from : to;
-      keyframes[keyframes.length - 1].opacity = visible ? to : from;
-    }
-
-    const keyframeEffect = new KeyframeEffect(el, keyframes, {
-      duration: (frames / 60) * 1000,
-      fill: "both",
-      easing: "linear",
-      iterations: 1,
-    });
-
-    const animation = new Animation(keyframeEffect);
-
-    animation.play();
-
-    return animation;
-  };
+  if (isUndefined(initial)) {
+    throw Error(`You must provide initial value ("visible" or "hidden").`);
+  }
 
   if (wait && isAnyDefined(enter, exit)) {
-    throw Error(`You cannot use wait if you use enter or exit!`);
+    throw Error(`You cannot use wait if enter or exit is defined.`);
   }
 
   enter = wait || enter;
   exit = wait || exit;
 
-  const animateVisible = (el) => animateSpring(el, true);
+  const animateVisible = (el) =>
+    animateSpring({
+      el,
+      variants,
+      stiffness,
+      duration,
+      damping,
+      mass,
+      visible: true,
+    });
 
   const playEnterAnimation = () => {
     if (!domRef.current) return;
@@ -109,22 +159,30 @@ export const useAnimatePresence = ({
     animationInstance.current = animation;
 
     if (enter) {
-      console.debug(debugName, "Registering onfinish enter animation");
+      debug(debugName, "Registering onfinish enter animation");
       animation.onfinish = () => enter();
     }
   };
 
   const handleExitAnimationEnd = (exitCb) => {
-    console.debug(debugName, "Exit animation finished");
+    debug(debugName, "Exit animation finished");
     setVariant("hidden");
     exitCb();
   };
 
   const togglePresence = (exitCb = noop) => {
-    console.debug(debugName, `Toggled variant, currently ${variant}`);
+    debug(debugName, `Toggled variant, currently ${variant}`);
 
     const playExitAnimation = () => {
-      const animation = animateSpring(domRef.current, false);
+      const animation = animateSpring({
+        el: domRef.current,
+        variants,
+        stiffness,
+        damping,
+        duration,
+        mass,
+        visible: false,
+      });
       animationInstance.current = animation;
 
       animation.onfinish = () => {
@@ -132,20 +190,17 @@ export const useAnimatePresence = ({
       };
     };
 
-    if (
-      animationInstance.current &&
-      animationInstance.current.playState === "running"
-    ) {
+    if (isRunning(animationInstance.current)) {
       animationInstance.current.reverse();
 
       if (!aboutToExit.current) {
-        console.debug(debugName, "Reverting enter animation");
+        debug(debugName, "Reverting enter animation");
 
         aboutToExit.current = true;
         animationInstance.current.onfinish = () =>
           handleExitAnimationEnd(exitCb);
       } else {
-        console.debug(debugName, "Reverting exit animation");
+        debug(debugName, "Reverting exit animation");
 
         const onFinish = () => {
           enter ? enter() : noop();
@@ -162,18 +217,18 @@ export const useAnimatePresence = ({
       if (exit) {
         aboutToExit.current = true;
 
-        console.debug(debugName, "Delaying exit animation");
+        debug(debugName, "Delaying exit animation");
 
         exit(playExitAnimation);
         return;
       } else {
-        console.debug(debugName, "Starting exit animation");
+        debug(debugName, "Starting exit animation");
 
         aboutToExit.current = true;
         playExitAnimation();
       }
     } else {
-      console.debug(debugName, "Switching to visible");
+      debug(debugName, "Switching to visible");
 
       aboutToExit.current = false;
       setVariant("visible");
@@ -182,22 +237,20 @@ export const useAnimatePresence = ({
 
   React.useLayoutEffect(() => {
     if (!domRef.current) {
-      console.debug(debugName, "domRef not found!");
-      didRender.current && console.log(debugName, "unmounted");
+      debug(debugName, "ref is now undefined!");
       return;
     }
 
     const shouldAnimateFirstRender = !didRender.current && animateFirstRender;
 
     if (shouldAnimateFirstRender) {
-      console.debug(debugName, "Animating first render");
+      debug(debugName, "Animating first render");
 
       return playEnterAnimation();
     }
 
     if (isVisible) {
-      console.debug(debugName, "Playing enter animation");
-      console.log(debugName, "mounted");
+      debug(debugName, "Playing enter animation");
 
       playEnterAnimation();
     }
@@ -205,7 +258,7 @@ export const useAnimatePresence = ({
 
   React.useLayoutEffect(() => {
     if (!didRender.current && isVisible) {
-      console.debug(debugName, "Rendered");
+      debug(debugName, "Rendered");
       didRender.current = true;
     }
   }, [isVisible]);
