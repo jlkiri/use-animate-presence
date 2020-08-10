@@ -1,7 +1,5 @@
-<p align="center" style="font-size: 36px"><strong>use-animate-presence</strong></p>
-
-<p align="center"><img width="480" height="240" src="https://i.giphy.com/media/ln1KKW8OnPNXXW3ppU/giphy.gif" /><p>
-
+<h1 align="center"><strong>use-animate-presence</strong></h1>
+<p align="center"><img width="480" height="240" src="https://i.giphy.com/media/ln1KKW8OnPNXXW3ppU/giphy.gif" /></p>
 <p align="center" style="font-size: 18px"><strong>A React hook for animating components when they are mounted and unmounted (added to / removed from React tree).</strong></p>
 
 # Features:
