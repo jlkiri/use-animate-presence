@@ -69,6 +69,17 @@ Play with the code here:
 | `togglePresence` |        Function that toggles presence (and animates)         |
 |   `isRendered`   | Boolean that should be used to conditionally render elements |
 
+Look again at the example above to see how all properties are used:
+
+```javascript
+return (
+  <div>
+    <button onClick={() => animatedDiv.togglePresence()}>Toggle</button>
+    {animatedDiv.isRendered && <div ref={animatedDiv.ref} />}
+  </div>
+);
+```
+
 ### Variants
 
 Variants look like this:
@@ -84,7 +95,36 @@ Except for `deg`, which is degrees of rotation, every property must have a `from
 
 ### `enter`, `exit` and `wait`
 
-These are callbacks to
+These are callbacks to be executed after `enter` (mount) or `exit` (unmount) animation finishes. `wait` is simply a shorthand - if you need to execute the same callback on both `enter` and `exit` animations you can just pass it as a `wait` property. Mostly, you will need this to chain mounts / unmounts. For example, if you want element B to animate only after element A is finished, you can do this:
+
+```javascript
+const elementA = useAnimatePresence({
+  variants: springVariants,
+  initial: "hidden",
+  debugName: "front-square",
+});
+
+const elementB = useAnimatePresence({
+  variants: springVariants,
+  initial: "visible",
+  wait: elementA.togglePresence,
+});
+
+return (
+  <>
+    {<button onClick={() => elementB.togglePresence()}>Toggle</button>}
+    {elementB.isRendered && (
+      <div ref={elementB.ref}>
+        {elementA.isRendered && <div ref={elementA.ref} />}
+      </div>
+    )}
+  </>
+);
+```
+
+In this example, `elementA` will not be animated and its property `isRendered` will be false until `elementB` is finished animating. Play with a complex example here:
+
+[![Edit use-animate-presence-demo](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/use-animate-presence-demo-cfn8b?fontsize=14&hidenavigation=1&theme=dark)
 
 ### Spring options
 
@@ -99,3 +139,18 @@ useAnimatePresence({
   },
 });
 ```
+
+## Requirements
+
+This library requires React version 16.8.0 or higher (the one with Hooks).
+
+## Contribution
+
+Any kind of contribution is welcome!
+
+1. Open an issue or pick an existing one that you want to work on
+2. Fork this repository
+3. Clone your fork to work on it locally
+4. Make changes
+5. Run `yarn build` and make sure that it builds without crash
+6. Push changes and [open a pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
