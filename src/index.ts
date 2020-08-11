@@ -182,7 +182,7 @@ export const useAnimatePresence = ({
     };
 
     if (isRunning(animationInstance.current)) {
-      animationInstance.current.reverse();
+      animationInstance.current.playbackRate *= -1;
 
       if (!aboutToExit.current) {
         debug(debugName, "Reverting enter animation");
