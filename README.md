@@ -150,7 +150,11 @@ useAnimatePresence({
 
 ## Popup notifications
 
-You can easily create nice popup notifications with this library. Example:
+You can easily create nice popup notifications with this library.
+
+![popup](./assets/popup.gif)
+
+Example:
 
 [![Edit animate-popup](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/animate-popup-ww83f?fontsize=14&hidenavigation=1&theme=dark)
 
