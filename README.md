@@ -148,9 +148,9 @@ useAnimatePresence({
 
 # Recipes
 
-## Popup notifications
+## Toast notifications
 
-You can easily create nice popup notifications with this library.
+You can easily create nice toast notifications with this library.
 
 ![popup](./assets/smooth-popup.gif)
 
