@@ -152,7 +152,7 @@ useAnimatePresence({
 
 You can easily create nice popup notifications with this library.
 
-![popup](./assets/popup.gif)
+![popup](./assets/popups.gif)
 
 Example:
 
