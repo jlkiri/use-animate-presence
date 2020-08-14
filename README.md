@@ -146,6 +146,14 @@ useAnimatePresence({
 });
 ```
 
+# Recipes
+
+## Popup notifications
+
+You can easily create nice popup notifications with this library. Example:
+
+[![Edit animate-popup](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/animate-popup-ww83f?fontsize=14&hidenavigation=1&theme=dark)
+
 # Requirements
 
 This library requires React version 16.8.0 or higher (the one with Hooks).
