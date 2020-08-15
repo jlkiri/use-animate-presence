@@ -133,6 +133,8 @@ export const useAnimatePresence = ({
       ? opacity.to
       : opacity.from;
 
+    console.log(keyframes);
+
     return startAnimation(
       el,
       keyframes,

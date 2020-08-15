@@ -154,9 +154,19 @@ You can easily create nice toast notifications with this library.
 
 ![popup](./assets/smooth-popup.gif)
 
-Example:
+Code:
 
 [![Edit animate-popup](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/animate-popup-ww83f?fontsize=14&hidenavigation=1&theme=dark)
+
+## Arbitrary number of animatable items
+
+You can render an arbitrary array of items that are animatable with `useAnimatePresence`. Here is something you can achieve if you combine this library with [react-easy-flip](https://github.com/jlkiri/react-easy-flip).
+
+![multiple-presence](./assets/multiple-presence.gif)
+
+Code:
+
+[![Edit animate-presence-multiple-2](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/animate-presence-multiple-2-o804h?fontsize=14&hidenavigation=1&theme=dark)
 
 # Requirements
 
