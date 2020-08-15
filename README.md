@@ -152,7 +152,7 @@ useAnimatePresence({
 
 You can easily create nice toast notifications with this library.
 
-![popup](./assets/smooth-popup.gif)
+<p align="center"><img src="./assets/smooth-popup.gif" width="500" height="300" /></p>
 
 Code:
 
@@ -162,7 +162,7 @@ Code:
 
 You can render an arbitrary array of items that are animatable with `useAnimatePresence`. Here is something you can achieve if you combine this library with [react-easy-flip](https://github.com/jlkiri/react-easy-flip).
 
-![multiple-presence](./assets/multiple-presence.gif)
+<p align="center"><img src="./assets/multiple-presence.gif" width="300" height="500" /></p>
 
 Code:
 
