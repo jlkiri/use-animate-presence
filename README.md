@@ -54,7 +54,7 @@ Play with the code here:
 |       Property       |   Default    | Required |          Type          |                                 Details                                 |
 | :------------------: | :----------: | :------: | :--------------------: | :---------------------------------------------------------------------: |
 |      `variants`      |      -       |  `true`  |        `object`        |                    Properties and values to animate                     |
-|      `initial`       |      -       |  `true`  | `"hidden" | "visible"` |                   Whether item is rendered initially                    |
+|      `initial`       |      -       |  `true`  | `"hidden" or "visible"` |                   Whether item is rendered initially                    |
 | `animateFirstRender` |    `true`    | `false`  |       `boolean`        |            Whether to animate on first render (first mount)             |
 |       `enter`        | `undefined`  | `false`  |       `function`       |          Function to execute when enter animation is finished           |
 |        `exit`        | `undefined`  | `false`  |       `function`       |           Function to execute when exit animation is finished           |
