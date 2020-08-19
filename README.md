@@ -16,7 +16,7 @@
 
 # Get started
 
-- NPM: `npm install use-animation-presence`
+- NPM: `npm install use-animate-presence`
 - UMD: https://unpkg.com/use-animate-presence@latest/lib/use-animate-presence.umd.js
 
 # Basic usage
