@@ -56,7 +56,7 @@ const startAnimation = (el, keyframes, duration) => {
 };
 
 const noop = () => {};
-const debug = (name: string, msg: string) => console.debug(name, msg);
+const debug = (name: string, msg: string) => name && console.debug(name, msg);
 
 const defaultDiff = { from: 0, to: 0 };
 const defaultOpacity = { from: 1, to: 1 };
@@ -71,7 +71,7 @@ export const useAnimatePresence = ({
   enter,
   exit,
   wait,
-  debugName = "unknown",
+  debugName = "",
 }: Parameters) => {
   const [variant, setVariant] = React.useState<Variant>(initial);
   const didRender = React.useRef(false);
@@ -132,8 +132,6 @@ export const useAnimatePresence = ({
     keyframes[keyframes.length - 1].opacity = visible
       ? opacity.to
       : opacity.from;
-
-    console.log(keyframes);
 
     return startAnimation(
       el,

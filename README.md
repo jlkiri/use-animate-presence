@@ -59,7 +59,7 @@ Play with the code here:
 |       `enter`        | `undefined`  | `false`  |       `function`       |          Function to execute when enter animation is finished           |
 |        `exit`        | `undefined`  | `false`  |       `function`       |           Function to execute when exit animation is finished           |
 |        `wait`        | `undefined`  | `false`  |       `function`       | Function to execute both when enter and when exit animation is finished |
-|     `debugName`      | `"unknown"`  | `false`  |        `string`        |          Name for tracking the animation lifecycle of the hook          |
+|     `debugName`      |     `""`     | `false`  |        `string`        |          Name for tracking the animation lifecycle of the hook, if not provided it won't show logs to console          |
 |      `duration`      |    `1000`    | `false`  |        `number`        |        Animation duration (ms) (use if you only animate opacity)        |
 |      `options`       | (read below) | `false`  |        `object`        |           Spring options (stiffness, mass and damping ratio)            |
 
