@@ -1,6 +1,6 @@
 {
   "name": "use-animate-presence",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "useAnimatePresence",
   "main": "use-animate-presence.js",
   "source": "src/index.ts",
